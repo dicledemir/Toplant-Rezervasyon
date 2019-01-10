@@ -11,7 +11,10 @@ namespace frmGiris
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+       public  static SqlHelper sqlHelper = new SqlHelper();
+        [STAThread] 
+
+       
         static void Main()
         {
             Application.EnableVisualStyles();
