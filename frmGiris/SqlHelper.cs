@@ -53,6 +53,6 @@ namespace frmGiris
             command.ExecuteNonQuery();
             connection.Close();
         }
-
+     
     }
 }

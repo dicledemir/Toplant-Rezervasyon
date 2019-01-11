@@ -18,7 +18,8 @@ namespace frmGiris
         {
             InitializeComponent();
         }
-
+        Reservation r = new Reservation();
+        TransactionsRepo tr = new TransactionsRepo();
         private void btnInsertMeeting_Click(object sender, EventArgs e)
         {
             Meeting m = new Meeting();
@@ -30,32 +31,68 @@ namespace frmGiris
 
         private void frmTransactions_Load(object sender, EventArgs e)
         {
-            TransactionsRepo tr = new TransactionsRepo();
+            var a = cbMeeting.ValueMember = "MeetingID";
+          
             dgwMeeting.DataSource = null;
             dgwMeeting.DataSource = tr.GetMeeting();
-            var a = cbMeeting.ValueMember = "MeetingID";
+           
             cbMeeting.DisplayMember = "MeetingName";
             cbMeeting.DataSource = null;
             cbMeeting.DataSource = tr.GetMeeting();
-            dataGridView2.DataSource = tr.GetReservation();
+            dataGridView2.DataSource = tr.GetReservation(a);
             dgwMeeting.Columns[0].Visible = false;
             dataGridView2.Columns[0].Visible = false;
             dataGridView2.Columns[4].Visible = false;
         }
-
+        public int TimeReservation()
+        {
+            if (rbsekizOn.Checked)
+            {
+                return 1;
+            }
+            else if (rbOnOniki.Checked)
+            {
+                return 2;
+            }
+            else if (rbOnucOndort.Checked)
+            {
+                return 3;
+            }
+            else if (rbOndortOnbes.Checked)
+            {
+                return 4;
+            }
+            else if (rbOndortOnbes.Checked)
+            {
+                return 5;
+            }
+            else
+                return 6;
+        }
         private void btnInsertReservation_Click(object sender, EventArgs e)
         {
-            Reservation r = new Reservation();
-            r.StarDate = Convert.ToDateTime(dtpStartTime.Value.ToLongTimeString());
-            r.FinishDate = Convert.ToDateTime(dtpFinishDate.Value.ToLongTimeString());
 
-            TimeSpan time = Convert.ToDateTime(dtpFinishDate.Value.ToLongTimeString())- Convert.ToDateTime(dtpStartTime.Value.ToLongTimeString());
-            var a = (int)cbMeeting.SelectedValue;
-            r.MeetingId = a;
-              r.sure =   time.ToString() ;
-            TransactionsRepo tr = new TransactionsRepo();
-            tr.InsertReservation(r);
-            MessageBox.Show("Test");
+            var liste =  tr.GetReservation(Convert.ToDateTime(dtpDay.Value.ToShortDateString()), (int)cbMeeting.SelectedValue);
+            bool Cakisma = false;
+            foreach (var item in liste)
+            {
+                if(item.time== TimeReservation())
+                {
+                    MessageBox.Show("Sectiğininz saat Dolu");                    
+                }
+                Cakisma = true;
+            }
+            if (Cakisma == false)
+            {
+                r.Day = Convert.ToDateTime(dtpDay.Value.ToShortDateString());
+                var a = (int)cbMeeting.SelectedValue;
+                r.MeetingId = a;
+                r.time = TimeReservation();
+                r.ReservationName = tbReservationName.Text;
+
+                tr.InsertReservation(r);
+                MessageBox.Show("Kayıt Yapıldı");
+            }
 
         }
     }
